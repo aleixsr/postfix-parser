@@ -21,32 +21,56 @@ RethinkDB server.
 
 ![Screenshot of Email Show Modal](https://cdn.privex.io/github/postfix-parser/postfix-parser-modal.png)
 
-Install
+Install (AlmaLinux 8)
 ========
 
 **Pre-requisites**
 
  - [RethinkDB](https://rethinkdb.com/) (for storing the queryable log data)
+   ```
+   sudo cat << EOF > /etc/yum.repos.d/rethinkdb.repo
+   [rethinkdb]
+   name=RethinkDB
+   enabled=1
+   baseurl=https://download.rethinkdb.com/repository/alma/8/x86_64/
+   gpgkey=https://download.rethinkdb.com/repository/raw/pubkey.gpg
+   gpgcheck=1
+   EOF
+   
+   sudo yum install rethinkdb
+   sudo cp /etc/rethinkdb/default.conf.sample /etc/rethinkdb/instances.d/instance1.conf
+   
+   TODO: systemctl https://rethinkdb.com/docs/start-on-startup/
+   
+   ```
  - Python 3.7 MINIMUM (will not work on earlier versions)
+    ```
+    dnf install python39 python39-pip
+    update-alternatives --config python3
+    (Select python3.9)
+    ```
  - Pipenv (`python3.7 -m pip install pipenv`) - for creating a virtualenv + installing dependencies
 
 
 ```
 
-apt update -y
-apt install -y python3.7 python3.7-dev python3-pip
+# User that will run the process
+adduser mailparser
 
-python3.7 -m pip install -U pipenv
+# To ensure that the parser is able to read the maillog, add the user to the appropriate groups
+gpasswd -a mailparser admx
+gpasswd -a mailparser postfix
 
-adduser --gecos "" --disabled-password mailparser
-# To ensure that the parser is able to read the mail.log, add the user to the appropriate groups
-gpasswd -a mailparser syslog adm postfix
+dnf install git
 
 su - mailparser
 
-git clone https://github.com/Privex/postfix-parser.git
+git clone https://github.com/aleixsr/postfix-parser.git
 cd postfix-parser
-pipenv install
+
+python3 -m pip install -U pipenv
+pipenv install --python /usr/bin/python3
+python3 -m pip install -r requirements.txt
 
 cp example.env .env
 # Adjust the example .env as needed. Make sure you set SECRET_KEY to a long random string, and change ADMIN_PASS 
@@ -61,11 +85,11 @@ crontab -e
 # *  *   *   *   *    flock /tmp/lck_mailparser /home/mailparser/postfix-parser/run.sh cron
 
 ####
-# DEVELOPMENT
+# TEST
 ####
 
-./run.sh dev         # Run the development server with automatic restart on edits
 ./run.sh parse       # Import MAIL_LOG immediately
+./run.sh prod        # Run the development server with automatic restart on edits
 
 ####
 # PRODUCTION
