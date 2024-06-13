@@ -81,7 +81,7 @@ Install (AlmaLinux 8)
 adduser mailparser
 
 # To ensure that the parser is able to read the maillog, add the user to the appropriate groups
-gpasswd -a mailparser admx
+gpasswd -a mailparser adm
 gpasswd -a mailparser postfix
 chmod 640 /var/log/maillog
 chown root:postfix /var/log/maillog
