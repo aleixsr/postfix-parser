@@ -22,7 +22,7 @@ RethinkDB server.
 ![Screenshot of Email Show Modal](https://cdn.privex.io/github/postfix-parser/postfix-parser-modal.png)
 
 Install (AlmaLinux 8)
-========
+=====================
 
 **Pre-requisites**
 
@@ -36,24 +36,47 @@ Install (AlmaLinux 8)
    gpgkey=https://download.rethinkdb.com/repository/raw/pubkey.gpg
    gpgcheck=1
    EOF
+
    
    sudo yum install rethinkdb
    sudo cp /etc/rethinkdb/default.conf.sample /etc/rethinkdb/instances.d/instance1.conf
+
    
-   TODO: systemctl https://rethinkdb.com/docs/start-on-startup/
+   sudo cat << EOF > /usr/lib/tmpfiles.d/rethinkdb.conf
+   d /run/rethinkdb 0755 rethinkdb rethinkdb -
+   EOF
+
    
+   sudo cat << EOF > /usr/lib/systemd/system/rethinkdb@.service
+   [Unit]
+   Description=RethinkDB database server for instance '%i'
+   
+   [Service]
+   User=rethinkdb
+   Group=rethinkdb
+   ExecStart=/usr/bin/rethinkdb serve --config-file /etc/rethinkdb/instances.d/%i.conf
+   KillMode=process
+   PrivateTmp=true
+   
+   [Install]
+   WantedBy=multi-user.target
+   EOF
+
+   sudo systemctl enable rethinkdb
+   sudo systemctl start rethinkdb
+   sudo systemctl status rethinkdb
    ```
- - Python 3.7 MINIMUM (will not work on earlier versions)
+ - Python 3.7 MINIMUM (will not work on earlier versions) + Pipenv (`python3.7 -m pip install pipenv`) - for creating a virtualenv + installing dependencies
     ```
     dnf install python39 python39-pip
     update-alternatives --config python3
     (Select python3.9)
     ```
- - Pipenv (`python3.7 -m pip install pipenv`) - for creating a virtualenv + installing dependencies
 
 
+**Install Process**
 ```
-
+# (AS ROOT)
 # User that will run the process
 adduser mailparser
 
@@ -82,6 +105,7 @@ nano .env
 # cron overlapping if there's a lot to parse.
 
 crontab -e
+# Uncomment when all is ok, confirm you have 'flock' installed also.
 # *  *   *   *   *    flock /tmp/lck_mailparser /home/mailparser/postfix-parser/run.sh cron
 
 ####
@@ -89,20 +113,26 @@ crontab -e
 ####
 
 ./run.sh parse       # Import MAIL_LOG immediately
-./run.sh prod        # Run the development server with automatic restart on edits
+# If all ok, remember to uncoment crontab -e line for mailpserser user!
+
+./run.sh prod        # Run the server just to test if it works and binds ip and port correctly
+# Go to http://you-server-ip-address:8487/ and type password set in .env file ADMIN_PASS value.
+
 
 ####
 # PRODUCTION
 ####
-
-exit
+Ctrl+C (to quit PROD execution)
+exit (to quit mailparser session and login as root again)
 
 # (AS ROOT)
-
 # Production systemd service for the WebUI
 install -m 644 /home/mailparser/postfix-parser/postfix-parser.service /etc/systemd/system/
 systemctl daemon-reload
 systemctl enable postfix-parser.service
+systemctl start postfix-parser.service
+systemctl status postfix-parser.service
+
 
 ```
 
