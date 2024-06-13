@@ -47,7 +47,7 @@ Install (AlmaLinux 8)
    EOF
 
    
-   sudo cat << EOF > /usr/lib/systemd/system/rethinkdb@.service
+   sudo cat << EOF > /usr/lib/systemd/system/rethinkdb@instance1.service
    [Unit]
    Description=RethinkDB database server for instance '%i'
    
