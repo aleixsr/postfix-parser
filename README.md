@@ -40,7 +40,7 @@ Install (AlmaLinux 8)
    
    sudo yum install rethinkdb
    sudo cp /etc/rethinkdb/default.conf.sample /etc/rethinkdb/instances.d/instance1.conf
-
+   # Edit directory = variable from /etc/rethinkdb/instances.d/instance1.conf (e.g: directory=/var/lib/rethinkdb/instance1/data)
    
    sudo cat << EOF > /usr/lib/tmpfiles.d/rethinkdb.conf
    d /run/rethinkdb 0755 rethinkdb rethinkdb -
