@@ -1,0 +1,3 @@
+rethinkdb
+pytz
+python-dotenv
