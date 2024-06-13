@@ -62,9 +62,9 @@ Install (AlmaLinux 8)
    WantedBy=multi-user.target
    EOF
 
-   sudo systemctl enable rethinkdb
-   sudo systemctl start rethinkdb
-   sudo systemctl status rethinkdb
+   sudo systemctl enable rethinkdb\@instance1
+   sudo systemctl start rethinkdb\@instance1
+   sudo systemctl status rethinkdb\@instance1
    ```
  - Python 3.7 MINIMUM (will not work on earlier versions) + Pipenv (`python3.7 -m pip install pipenv`) - for creating a virtualenv + installing dependencies
     ```
