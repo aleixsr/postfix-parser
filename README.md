@@ -129,8 +129,9 @@ exit (to quit mailparser session and login as root again)
 vim /etc/crontab
 MAILTO=""
 *  *   *   *   *    flock /tmp/lck_mailparser /home/mailparser/postfix-parser/run.sh cron
-![Screenshot of /etc/crontab]((https://github.com/aleixsr/postfix-parser/blob/master/crontab.png?raw=true)
-
+```
+![Screenshot of /etc/crontab](https://github.com/aleixsr/postfix-parser/blob/master/crontab.png?raw=true)
+```
 # (AS ROOT)
 # Production systemd service for the WebUI
 install -m 644 /home/mailparser/postfix-parser/postfix-parser.service /etc/systemd/system/
@@ -138,8 +139,6 @@ systemctl daemon-reload
 systemctl enable postfix-parser.service
 systemctl start postfix-parser.service
 systemctl status postfix-parser.service
-
-
 ```
 
 # License
