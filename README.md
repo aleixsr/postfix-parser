@@ -106,9 +106,9 @@ nano .env
 # You should use a file lock utility such as `flock` (included by default on Ubuntu) or `lckdo` to prevent the
 # cron overlapping if there's a lot to parse.
 
-crontab -e
-# Uncomment when all is ok, confirm you have 'flock' installed also.
-# *  *   *   *   *    flock /tmp/lck_mailparser /home/mailparser/postfix-parser/run.sh cron
+# Test if crontab proccess will work:
+*  *   *   *   *    flock /tmp/lck_mailparser /home/mailparser/postfix-parser/run.sh cron
+![Screenshot of /etc/crontab](./crontab.png)
 
 ####
 # TEST
@@ -126,6 +126,10 @@ crontab -e
 ####
 Ctrl+C (to quit PROD execution)
 exit (to quit mailparser session and login as root again)
+vim /etc/crontab
+MAILTO=""
+*  *   *   *   *    flock /tmp/lck_mailparser /home/mailparser/postfix-parser/run.sh cron
+
 
 # (AS ROOT)
 # Production systemd service for the WebUI
