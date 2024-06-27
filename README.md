@@ -107,8 +107,8 @@ nano .env
 # cron overlapping if there's a lot to parse.
 
 # Test if crontab proccess will work:
-*  *   *   *   *    flock /tmp/lck_mailparser /home/mailparser/postfix-parser/run.sh cron
-![Screenshot of /etc/crontab](./crontab.png)
+flock /tmp/lck_mailparser /home/mailparser/postfix-parser/run.sh cron
+
 
 ####
 # TEST
@@ -129,7 +129,7 @@ exit (to quit mailparser session and login as root again)
 vim /etc/crontab
 MAILTO=""
 *  *   *   *   *    flock /tmp/lck_mailparser /home/mailparser/postfix-parser/run.sh cron
-
+![Screenshot of /etc/crontab]((https://github.com/aleixsr/postfix-parser/blob/master/crontab.png?raw=true)
 
 # (AS ROOT)
 # Production systemd service for the WebUI
